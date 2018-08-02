@@ -1,7 +1,6 @@
 package io.hsjang.markers.domain;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;

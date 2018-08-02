@@ -2,7 +2,6 @@ package io.hsjang.markers.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
-import org.springframework.data.geo.Metric;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
