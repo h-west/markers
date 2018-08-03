@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import io.hsjang.markers.domain.userprovider.UserProvider;
 import lombok.Data;
 
 @Document
@@ -19,7 +18,7 @@ public class User {
 	String image;
 	List<String> auths;
 	
-	public User(UserProvider provider) {
+	/*public User(UserProvider provider) {
 		this.userId = provider.getUserId();
-	}
+	}*/
 }

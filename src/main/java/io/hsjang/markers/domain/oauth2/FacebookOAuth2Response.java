@@ -1,11 +1,10 @@
-package io.hsjang.markers.domain.userprovider;
-
-import java.util.List;
+package io.hsjang.markers.domain.oauth2;
 
 import lombok.Data;
 
 @Data
-public class FacebookUserProvider implements UserProvider {
+public class FacebookOAuth2Response implements OAuth2Response {
+
 /*
 
 accessToken: EAAGigL47hNEBAD0hEUwlbWDIWuGv3w9bQUhLC9KLqhb0knkMRZCnGEfpZBaYu1jn0kub8FEk0VqT7NCWIvkeASe2i8ohENiaXTuIHhbj8A6eWHE7IBCnZCTTYEEY6TMZCgriq7WTrLNs0d8FZBntnr4M3KZBPvV5gG4xdrUMjESGT7xX1Y5uZCLlCL7D2kUQCMxiZAxzEAODBwZDZD
@@ -25,22 +24,5 @@ userID - 앱 사용자의 ID입니다.
 	int expiresIn;
 	String signedRequest;
 	int reauthorize_required_in;
-	
-	@Override
-	public String getUserId() {
-		return this.userID;
-	}
-	@Override
-	public String getName() {
-		return "name";
-	}
-	@Override
-	public String getImage() {
-		return "image";
-	}
-	@Override
-	public List<String> getAuths() {
-		return null;
-	}
 	
 }
