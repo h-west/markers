@@ -23,6 +23,7 @@ public class MarkersApplication {
 			.authorizeExchange()
 				.anyExchange().permitAll()
 				.and()
+				.csrf().disable()
 			.build();
 	}
 }
