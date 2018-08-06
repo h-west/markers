@@ -1,10 +1,15 @@
-package io.hsjang.markers.domain.oauth2;
+package io.hsjang.markers.service.user.provider.facebook;
 
+import org.springframework.web.reactive.function.client.WebClient;
+
+import io.hsjang.markers.service.user.UserInfo;
+import io.hsjang.markers.service.user.provider.UserInfoProvider;
 import lombok.Data;
+import reactor.core.publisher.Mono;
 
 @Data
-public class FacebookOAuth2Response implements OAuth2Response {
-
+public class FacebookUserInfoProvider implements UserInfoProvider {
+	
 /*
 
 accessToken: EAAGigL47hNEBAD0hEUwlbWDIWuGv3w9bQUhLC9KLqhb0knkMRZCnGEfpZBaYu1jn0kub8FEk0VqT7NCWIvkeASe2i8ohENiaXTuIHhbj8A6eWHE7IBCnZCTTYEEY6TMZCgriq7WTrLNs0d8FZBntnr4M3KZBPvV5gG4xdrUMjESGT7xX1Y5uZCLlCL7D2kUQCMxiZAxzEAODBwZDZD
@@ -24,5 +29,15 @@ userID - 앱 사용자의 ID입니다.
 	int expiresIn;
 	String signedRequest;
 	int reauthorize_required_in;
+	
+	@Override
+	public Mono<UserInfo> getUserInfo(WebClient client) {
+		System.out.println("###>"+getAccessToken());
+		return client.get().uri("/me?fields=id,name,email,picture&access_token={accessToken}",getAccessToken())
+				.exchange()
+				.flatMap(FacebookUserInfo::getUserInfo);
+		
+	}
+
 	
 }

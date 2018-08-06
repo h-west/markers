@@ -1,23 +1,19 @@
-package io.hsjang.markers.service.user;
+package io.hsjang.markers.service.user.provider.facebook;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.hsjang.markers.domain.User;
-import io.hsjang.markers.domain.oauth2.FacebookOAuth2Response;
+import io.hsjang.markers.service.user.UserProvider;
+import io.hsjang.markers.service.user.provider.UserInfoProvider;
 import reactor.core.publisher.Mono;
 
 @Service
-public class FacebookUserProviderService implements UserProviderService<FacebookOAuth2Response>,InitializingBean {
+public class FacebookUserProvider implements UserProvider,InitializingBean {
 
 	WebClient fbClient;
 	String FACEBOOK_GRAPH_HOST = "https://graph.facebook.com/v3.1";
@@ -41,10 +37,15 @@ public class FacebookUserProviderService implements UserProviderService<Facebook
 
 	}
 
+	@Override
+	public Mono<User> getUser(UserInfoProvider provider) {
+		return provider.getUserInfo(fbClient).map(User::new);
+	}
+
 	// https://graph.facebook.com/me?fields=id,name,email
 	// https://graph.facebook.com/v3.1/me?access_token=aaa|aaa&debug=all&fields=id,name&format=json&method=get&pretty=0&suppress_http_code=1
-	@Override
-	public Mono<User> getUser(FacebookOAuth2Response oauth2) {
+//	@Override
+//	public Mono<User> getUser() {
 //		String inputToken = oauth2.getAccessToken();
 //		fbClient.method(HttpMethod.GET).uri("/debug_token?input_token="+inputToken+"&access_token="+appAccessToken).exchange()
 //				.filter(r->{r.body})
@@ -73,8 +74,8 @@ public class FacebookUserProviderService implements UserProviderService<Facebook
 //					// 
 //				});
 		
-		return Mono.just(new User());
-	}
+//		return Mono.just(new User());
+//	}
 
 	// @formatter:off
 	/*

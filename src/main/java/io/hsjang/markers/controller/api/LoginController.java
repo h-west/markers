@@ -1,6 +1,5 @@
 package io.hsjang.markers.controller.api;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -13,9 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import io.hsjang.markers.domain.User;
-import io.hsjang.markers.domain.oauth2.FacebookOAuth2Response;
 import io.hsjang.markers.repository.UserRepository;
-import io.hsjang.markers.service.user.FacebookUserProviderService;
+import io.hsjang.markers.service.user.provider.UserInfoProvider;
+import io.hsjang.markers.service.user.provider.facebook.FacebookUserInfoProvider;
+import io.hsjang.markers.service.user.provider.facebook.FacebookUserProvider;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -26,7 +26,7 @@ public class LoginController implements InitializingBean{
 	UserRepository userRepository;
 	
 	@Autowired
-	FacebookUserProviderService facebookUserProviderService;
+	FacebookUserProvider facebookUserProvider;
 	
 	WebClient fbClient;
 	final String FACEBOOK_GRAPH_URL = "https://graph.facebook.com";
@@ -53,9 +53,10 @@ public class LoginController implements InitializingBean{
 //	}
 	
 	@PostMapping("/login/fb")
-	public Mono<User> fbLogin(Mono<FacebookOAuth2Response> oauth){
-		return oauth.flatMap(facebookUserProviderService::getUser);
+	public Mono<User> fbLogin(Mono<FacebookUserInfoProvider> userInfoProvider){
+		 return userInfoProvider.flatMap(facebookUserProvider::getUser);
 	}
+	
 	
 	@RequestMapping("/login/fbtest")
 	@ResponseBody
