@@ -16,13 +16,15 @@ public class User {
 	@Id
 	String userId;
 	String name;
+	String email;
 	String image;
 	List<String> auths;
 	
 	public User(UserInfo userInfo) {
 		this.userId = userInfo.getUserId();
-		this.name = userInfo.getUserId();
-		this.image = userInfo.getUserId();
+		this.name = userInfo.getUserName();
+		this.email = userInfo.getUserEmail();
+		this.image = userInfo.getUserImage();
 		auths = Arrays.asList("USER");
 	}
 }

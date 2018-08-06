@@ -3,7 +3,6 @@ package io.hsjang.markers.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import reactor.core.publisher.Mono;
 
@@ -19,10 +18,5 @@ public class RootController {
 	public String page(@PathVariable String page) {
 		return page;
 	}
-	
-	@RequestMapping("/favicon.ico")
-	@ResponseBody
-	public String favicon() {
-		return "";
-	}
+
 }
