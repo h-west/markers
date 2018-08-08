@@ -2,6 +2,7 @@ package io.hsjang.markers.config.security;
 
 import java.util.Collection;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -24,54 +25,20 @@ public class JwtAuthenticationWebFilter extends AuthenticationWebFilter {
 
 		
 		setAuthenticationConverter(exchange->{
-			
-			
-			
-			
-			return Mono.just(new Authentication() {
-				
-				@Override
-				public String getName() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public boolean isAuthenticated() {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public Object getPrincipal() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public Object getDetails() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public Object getCredentials() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public Collection<? extends GrantedAuthority> getAuthorities() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-			});
+			Mono<ServerHttpRequest> request = Mono.just(exchange).map(ServerWebExchange::getRequest);
+			return request
+				.map(ServerHttpRequest::getHeaders)
+				.filter(h -> h.containsKey(headerOrParamKey))
+				.map(h -> h.getFirst(headerOrParamKey))
+				.flatMap(JwtAuthenticationWebFilter.this::getAuthentication)
+				.switchIfEmpty(
+					request
+					.map(ServerHttpRequest::getQueryParams)
+					.filter(q -> q.containsKey(headerOrParamKey))
+					.map(q ->q.getFirst(headerOrParamKey))
+					.flatMap(JwtAuthenticationWebFilter.this::getAuthentication)
+					.switchIfEmpty(Mono.just(null))
+				);
 		});
 		
 		setAuthenticationFailureHandler(new ServerAuthenticationEntryPointFailureHandler((exchange, ex)->
@@ -92,6 +59,10 @@ public class JwtAuthenticationWebFilter extends AuthenticationWebFilter {
 						.switchIfEmpty(MatchResult.notMatch())
 					);
 		});
+	}
+	
+	public Mono<Authentication> getAuthentication(String token){
+		return Mono.just(null);
 	}
 
 }
