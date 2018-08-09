@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
+import io.hsjang.markers.config.security.MarkerToken;
 import io.hsjang.markers.domain.User;
 import io.hsjang.markers.repository.UserRepository;
 import io.hsjang.markers.service.user.provider.facebook.FacebookUserInfoProvider;
@@ -36,7 +37,7 @@ public class LoginController {
 				.map(u->{
 					exchange.getResponse()
 					.addCookie(
-							ResponseCookie.from("mkt", "jtw")
+							ResponseCookie.from("mkt", MarkerToken.of(u))
 							.maxAge(Duration.ofDays(1))
 							.path("/")
 							.secure(true)

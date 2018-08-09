@@ -1,6 +1,7 @@
 package io.hsjang.markers.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,8 @@ public class RootController {
 	
 	@RequestMapping("/auth")
 	@PreAuthorize("hasRole('USER')")
-	public Mono<String> auth() {
+	public Mono<String> auth(@AuthenticationPrincipal String userId) {
+		System.out.println(userId);
 		return Mono.just("main");
 	}
 

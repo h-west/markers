@@ -32,7 +32,7 @@ userID - 앱 사용자의 ID입니다.
 	
 	@Override
 	public Mono<UserInfo> getUserInfo(WebClient client) {
-		System.out.println("###>"+getAccessToken());
+		//System.out.println("###>"+getAccessToken());
 		return client.get().uri("/me?fields=id,name,email,picture&access_token={accessToken}",getAccessToken())
 				.exchange()
 				.flatMap(FacebookUserInfo::getUserInfo);

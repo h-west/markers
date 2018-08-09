@@ -48,10 +48,10 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-oauth2-client</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 		   <groupId>org.springframework.security</groupId>
 		   <artifactId>spring-security-oauth2-jose</artifactId>
@@ -140,7 +140,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-	</repositories> -->
+	</repositories>
 	
 	<pluginRepositories>
 		<pluginRepository>
@@ -159,6 +159,6 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
-	</pluginRepositories>
+	</pluginRepositories>  -->
 
 </project>
