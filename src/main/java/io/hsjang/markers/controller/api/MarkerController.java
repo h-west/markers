@@ -6,6 +6,7 @@ import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ public class MarkerController {
 	 */
 	@GetMapping("/markers")
 	public Flux<Marker<?>> makers() {
+		//throw new MarkerException(MarkerExceptionType.UNKONWN);
 		return markerRepository.findAll().take(2);
 	}
 	
@@ -51,8 +53,9 @@ public class MarkerController {
 	 */
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/marker/point/{lat}/{lng}")
-	public Mono<Marker<GeoJsonPoint>> point(Marker<GeoJsonPoint> marker, @PathVariable double lat, @PathVariable double lng) {
+	public Mono<Marker<GeoJsonPoint>> point(Marker<GeoJsonPoint> marker, @PathVariable double lat, @PathVariable double lng, @AuthenticationPrincipal String userId) {
 		marker.setGeometry(new GeoJsonPoint(lat, lng));
+		marker.setUserId(userId);
 		return markerRepository.save(marker);
 	}
 	

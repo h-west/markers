@@ -13,4 +13,7 @@ public class Marker<T> {
 	String id;
 	String name;
 	T geometry;
+	
+	//user
+	String userId;
 }

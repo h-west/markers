@@ -1,16 +1,24 @@
 package io.hsjang.markers.controller.api;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
+import io.hsjang.markers.config.exception.MarkerException;
+import io.hsjang.markers.config.exception.MarkerExceptionType;
 import io.hsjang.markers.config.security.MarkerToken;
+import io.hsjang.markers.domain.Marker;
 import io.hsjang.markers.domain.User;
 import io.hsjang.markers.repository.UserRepository;
 import io.hsjang.markers.service.user.provider.facebook.FacebookUserInfoProvider;
@@ -26,7 +34,7 @@ public class LoginController {
 
 	@Autowired
 	FacebookUserProvider facebookUserProvider;
-	
+
 	@PostMapping("/login/fb")
 	public Mono<User> fbLogin(Mono<FacebookUserInfoProvider> userInfoProvider, ServerWebExchange exchange) {
 		// @formatter:off
@@ -35,14 +43,16 @@ public class LoginController {
 				.flatMap(facebookUserProvider::getUser)
 				.flatMap(userRepository::save)
 				.map(u->{
-					exchange.getResponse()
-					.addCookie(
-							ResponseCookie.from("mkt", MarkerToken.of(u))
-							.maxAge(Duration.ofDays(1))
-							.path("/")
-							.secure(true)
-							.build()
+					ServerHttpResponse response = exchange.getResponse();
+					response.setStatusCode(HttpStatus.CREATED);
+					response.addCookie(
+						ResponseCookie.from("mkt", MarkerToken.of(u))
+						.maxAge(Duration.ofDays(9999))
+						.path("/")
+						.secure(true)
+						.build()
 					);
+					//response.getHeaders().setLocation(new URI("/main"));
 					return u;
 				});
 		
