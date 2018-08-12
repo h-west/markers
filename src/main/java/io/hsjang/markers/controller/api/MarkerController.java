@@ -1,5 +1,7 @@
 package io.hsjang.markers.controller.api;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
@@ -31,7 +33,7 @@ public class MarkerController {
 	@GetMapping("/markers")
 	public Flux<Marker<?>> makers() {
 		//throw new MarkerException(MarkerExceptionType.UNKONWN);
-		return markerRepository.findAll().take(2);
+		return markerRepository.findAll().take(100);
 	}
 	
 	@GetMapping("/markers/{lat}/{lng}")
@@ -53,10 +55,8 @@ public class MarkerController {
 	 */
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/marker/point/{lat}/{lng}")
-	public Mono<Marker<GeoJsonPoint>> point(Marker<GeoJsonPoint> marker, @PathVariable double lat, @PathVariable double lng, @AuthenticationPrincipal String userId) {
-		marker.setGeometry(new GeoJsonPoint(lat, lng));
-		marker.setUserId(userId);
-		return markerRepository.save(marker);
+	public Mono<Marker<GeoJsonPoint>> point(Map<String,Object> param, @PathVariable double lat, @PathVariable double lng, @AuthenticationPrincipal String userId) {
+		return markerRepository.save(new Marker<GeoJsonPoint>(new GeoJsonPoint(lat, lng),param));
 	}
 	
 	

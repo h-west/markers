@@ -7,11 +7,15 @@
 <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=qVm5EJRqH7QHtnN0CXSv"></script>
 <script type="text/javascript" src="https://unpkg.com/jquery"></script>
 <script type="text/javascript" src="https://unpkg.com/vue"></script>
+<script type="text/javascript" src="https://unpkg.com/vue-router"></script>
 </head>
 <body>
 	<header></header>
-	<section id="app">
+	<section  id="app">
 		<div id="map" style="width: 100%; height: 100%;"></div>
+		<div>
+			<router-view></router-view>
+		</div>
 	</section>
 	<script type="text/javascript" src="/js/app.js"></script>
 </body>

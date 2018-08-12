@@ -1,5 +1,7 @@
 package io.hsjang.markers.domain;
 
+import java.util.Map;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,9 +13,12 @@ public class Marker<T> {
 	
 	@Id
 	String id;
-	String name;
+	String type = "Feature";
 	T geometry;
+	Map<String,Object> properties;
 	
-	//user
-	String userId;
+	public Marker(T geometry, Map<String,Object> properties) {
+		setGeometry(geometry);
+		setProperties(properties);
+	}
 }
