@@ -33,7 +33,7 @@ public class Marker<T> {
 	public void setDetailProperties(MarkerDetail detail) {
 		Map<String, Object> p = new HashMap<String, Object>();
 		
-		p.put("name", detail.getTitle());
+		p.put("title", detail.getTitle());
 		p.put("icon", detail.getIcon());
 		setProperties(p);
 	}

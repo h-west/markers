@@ -21,7 +21,7 @@
 		  $('#'+this.id).popup({transition: 'all 0.3s'});
 	  }
 	})
-	var vm = new Vue({
+	g.vm = new Vue({
 		el : '#app',
 		data : {
 			marker : {title:'무제'}
@@ -62,6 +62,16 @@
 						$('.create_marker_close').click();
 			        }
 			    });
+			},
+			detail : function(id){
+				var $vm = this;
+				$.get('/api/marker/'+id,function(detail){
+					$vm.$set($vm, 'marker', detail);
+					$('.create_marker_open').click();
+					if (infoWindow.getMap()) {
+						infoWindow.close();
+				    }
+			    });
 			}
 		}/*,
 		components : {
@@ -72,11 +82,17 @@
 	});
 	
 	
+	/***************************************************************************
+	 * Meta 분
+	 */
+	var MARKER_ICONS = {
+		
+	}
 
 	/***************************************************************************
 	 * Map 을 정의함.
 	 */
-	g.map = new naver.maps.Map('map', {
+	map = new naver.maps.Map('map', {
 		zoom : 8,
 		logoControl : false
 	});
@@ -86,6 +102,38 @@
 		    features : features
 		});
 	});
+	map.data.setStyle(function(feature) {
+        return {
+        	icon : feature.getProperty('icon')
+        	//,title : feature.getProperty('title')
+        };
+    });
+	
+	var infoWindow = new naver.maps.InfoWindow();
+	var contentArray = ['<div style="width:150px;text-align:center;padding:10px;" onclick="vm.detail(\'',
+						'',
+						'\')">',
+						'',
+						'</div>'];
+	infoWindow.setCustom = function(id, str){
+		contentArray[1] = id;
+		contentArray[3] = str;
+		this.setContent(contentArray.join(''));
+	}
+	map.data.addListener('click', function(e) {
+//		if (infoWindow.getMap()) {
+//			infoWindow.close();
+//	    } else {
+	    	infoWindow.setCustom(e.feature.id,e.feature.property_title);
+	    	infoWindow.open(map, e.overlay);
+//	    }
+    });
+	naver.maps.Event.addListener(map, 'click', function() {
+		if (infoWindow.getMap()) {
+			infoWindow.close();
+	    }
+	});
+	
 
 	/***************************************************************************
 	 * 작성버튼 생성

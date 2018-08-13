@@ -49,8 +49,8 @@ public class MarkerController {
 	 * GET ITEM
 	 */
 	@GetMapping("/marker/{id}")
-	public Mono<Marker<?>> maker(@PathVariable String id) {
-		return markerRepository.findById(id);
+	public Mono<MarkerDetail> maker(@PathVariable String id) {
+		return markerDetailRepository.findById(id);
 	}
 	
 	
