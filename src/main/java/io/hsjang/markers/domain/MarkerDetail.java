@@ -11,6 +11,14 @@ public class MarkerDetail {
 	
 	@Id
 	String markerId;
-	String name;
+	String title;
+	String icon;
 	String userId;
+	String contents;
+	String url;
+	
+	public MarkerDetail buildMarkerId(String markerId) {
+		setMarkerId(markerId);
+		return this;
+	}
 }

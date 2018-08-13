@@ -8,14 +8,36 @@
 <script type="text/javascript" src="https://unpkg.com/jquery"></script>
 <script type="text/javascript" src="https://unpkg.com/vue"></script>
 <script type="text/javascript" src="https://unpkg.com/vue-router"></script>
+<script type="text/javascript" src="/js/lib/jquery.popupoverlay.js"></script>
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 	<header></header>
-	<section  id="app">
+	<section id="app">
 		<div id="map" style="width: 100%; height: 100%;"></div>
 		<div>
 			<router-view></router-view>
 		</div>
+		<!-- <div id="create_marker" class="popup">
+			<h4>작성하기</h4>
+			<marker-info>
+				<li><span>제목</span><input type="text" v-model="marker.title"></li>
+			</marker-info>
+			<button @click="write()">작성</button>
+			<button class="create_marker_open" style="display:none;"></button>
+			<button class="create_marker_close" style="display:none;"></button>
+		</div> -->
+		<marker-detail title="작성하기" id="create_marker">
+			<template slot-scope="props" slot="items">
+				<li><span>제목</span><input type="text" v-model="marker.title"></li>
+				<li><span>내용</span><input type="text" v-model="marker.contents"></li>
+				<li><span>링크</span><input type="text" v-model="marker.url"></li>
+			</template>
+			<template slot-scope="props" slot="buttons">
+				<button  @click="write()" >작성</button>
+			</template>
+		</marker-detail>
 	</section>
 	<script type="text/javascript" src="/js/app.js"></script>
 </body>

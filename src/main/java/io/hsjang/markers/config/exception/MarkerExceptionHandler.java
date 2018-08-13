@@ -81,6 +81,7 @@ public class MarkerExceptionHandler implements ErrorWebExceptionHandler{
 			.filter(m -> m.containsKey(ex.getClass()))
 			.next()
 			.map(m-> m.get(ex.getClass()))
-			.flatMap(f->f.apply(exchange, ex));
+			.flatMap(f->f.apply(exchange, ex))
+			.switchIfEmpty(Mono.error(ex));
 	}
 }
