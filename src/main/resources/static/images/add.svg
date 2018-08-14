@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+	<style>
+		path:hover{
+			fill:red;
+			cursor: point;
+		}
+	</style>
+	<g class="currentLayer">
+		<path fill="#4a90d6" fill-opacity="1" stroke="#222222" stroke-opacity="1" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end=""
+			d="M2.7241379022598267,25.298850655555725 C2.7241379022598267,13.144154522959042 12.569441769663143,3.298850655555725 24.724137902259827,3.298850655555725 C36.87883403485651,3.298850655555725 46.72413790225983,13.144154522959042 46.72413790225983,25.298850655555725 C46.72413790225983,37.45354678815241 36.87883403485651,47.298850655555725 24.724137902259827,47.298850655555725 C12.569441769663143,47.298850655555725 2.7241379022598267,37.45354678815241 2.7241379022598267,25.298850655555725 z"
+			id="svg_1" class="" />
+		<path fill="#4a90d6" fill-opacity="1" stroke="#222222" stroke-opacity="1" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end=""
+			d="M12.804614468253192,23.6494216499689L38.09197065149515,23.6494216499689" id="svg_4" />
+		<path fill="#4a90d6" fill-opacity="1" stroke="#222222" stroke-opacity="1" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end=""
+			d="M23.149441997761244,11.005743558347945L23.149441997761244,38.01723766317457" id="svg_6" />
+	</g>
+</svg>

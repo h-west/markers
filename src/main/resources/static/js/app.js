@@ -86,7 +86,9 @@
 	 * Meta 분
 	 */
 	var MARKER_ICONS = {
-		
+		T1 : '/images/t1.svg',
+		T2 : '/images/t2.svg',
+		T3 : '/images/t3.svg'
 	}
 
 	/***************************************************************************
@@ -96,18 +98,18 @@
 		zoom : 8,
 		logoControl : false
 	});
+	map.data.setStyle(function(feature) {
+        return {
+        	icon : MARKER_ICONS.T1 //feature.getProperty('icon')
+        	//,title : feature.getProperty('title')
+        };
+    });
 	$.get('/api/markers',function(features){
 		map.data.addGeoJson({
 			type : 'FeatureCollection',
 		    features : features
 		});
 	});
-	map.data.setStyle(function(feature) {
-        return {
-        	icon : feature.getProperty('icon')
-        	//,title : feature.getProperty('title')
-        };
-    });
 	
 	var infoWindow = new naver.maps.InfoWindow();
 	var contentArray = ['<div style="width:150px;text-align:center;padding:10px;" onclick="vm.detail(\'',
@@ -138,7 +140,7 @@
 	/***************************************************************************
 	 * 작성버튼 생성
 	 */
-	var writeMarkerBtn = new naver.maps.CustomControl('<a href="#">쓰기</a>', {
+	var writeMarkerBtn = new naver.maps.CustomControl('<img src="/images/add.svg">', {
 		position : naver.maps.Position.RIGHT_BOTTOM
 	});writeMarkerBtn.setMap(map);
 	naver.maps.Event.addDOMListener(writeMarkerBtn.getElement(), 'click', showWriteMarker);
