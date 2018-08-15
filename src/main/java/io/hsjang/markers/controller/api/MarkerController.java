@@ -18,6 +18,8 @@ import io.hsjang.markers.domain.Marker;
 import io.hsjang.markers.domain.MarkerDetail;
 import io.hsjang.markers.repository.MarkerDetailRepository;
 import io.hsjang.markers.repository.MarkerRepository;
+import io.hsjang.markers.repository.UserRepository;
+import io.hsjang.markers.service.map.MapService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -29,7 +31,13 @@ public class MarkerController {
 	MarkerRepository markerRepository;
 	
 	@Autowired
+	UserRepository userRepository;
+	
+	@Autowired
 	MarkerDetailRepository markerDetailRepository;
+
+	@Autowired
+	MapService mapService;
 
 	/************************
 	 * GET ITEMS 
@@ -40,9 +48,9 @@ public class MarkerController {
 		return markerRepository.findAll().take(100);
 	}
 	
-	@GetMapping("/markers/{lat}/{lng}")
-	public Flux<Marker<?>> makers(@PathVariable double lat, @PathVariable double lng) {
-		return markerRepository.findByGeometryNear(new Point(lat, lng), new Distance(10000, Metrics.KILOMETERS));
+	@GetMapping("/markers/{zoom}/{lat}/{lng}")
+	public Flux<Marker<?>> makers(@PathVariable int zoom, @PathVariable double lat, @PathVariable double lng) {
+		return markerRepository.findByGeometryNear(new Point(lat, lng), mapService.getDistanceByZoom(zoom)).take(100);
 	}
 	
 	/************************
@@ -50,7 +58,21 @@ public class MarkerController {
 	 */
 	@GetMapping("/marker/{id}")
 	public Mono<MarkerDetail> maker(@PathVariable String id) {
+		
 		return markerDetailRepository.findById(id);
+	
+//		.map(md-> userRepository.findById(md.getUserId())
+//						.publish(m->{md.setUser(); return md;}));
+				
+//					userRepository.findById(md.getUserId())
+//					.flatMap(u-> {md.setUser(u); return Mono.just(md);})
+//				);
+		
+		
+//		.publish(u->{
+//			md.setUser(u);
+//			return md;
+//		})
 	}
 	
 	
@@ -62,7 +84,11 @@ public class MarkerController {
 	public Mono<Marker<GeoJsonPoint>> point(@RequestBody MarkerDetail markerDetail, @PathVariable double lat, @PathVariable double lng, @AuthenticationPrincipal String userId) {
 		return markerRepository.save(new Marker<GeoJsonPoint>(new GeoJsonPoint(lat, lng),markerDetail))
 				.map(m ->{
-					markerDetailRepository.save(markerDetail.buildMarkerId(m.getId())).subscribe();
+					markerDetailRepository.save(
+							markerDetail
+								.addMarkerId(m.getId())
+								.addUserId(userId)
+							).subscribe();
 					return m;
 				});
 	}

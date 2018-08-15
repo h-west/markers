@@ -17,6 +17,7 @@
 	<header></header>
 	<section id="app">
 		<div id="map" style="width: 100%; height: 100%;"></div>
+		<img id="writeMarker" src="https://ssl.pstatic.net/static/maps/mantle/1x/marker-default.png" style="position: absolute; display:none"/>
 		<div>
 			<router-view></router-view>
 		</div>
@@ -33,7 +34,7 @@
 			<template slot-scope="props" slot="items">
 				<li><span>제목</span><input type="text" v-model="marker.title"></li>
 				<li><span>내용</span><input type="text" v-model="marker.contents"></li>
-				<li><span>링크</span><input type="text" v-model="marker.url"></li>
+				<li><span>타입</span><input type="text" v-model="marker.type"></li>
 			</template>
 			<template slot-scope="props" slot="buttons">
 				<button  @click="write()" >작성</button>

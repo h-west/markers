@@ -21,13 +21,16 @@
 		  $('#'+this.id).popup({transition: 'all 0.3s'});
 	  }
 	})
-	g.vm = new Vue({
+	var vm = new Vue({
 		el : '#app',
 		data : {
-			marker : {title:'무제'}
+			marker : {type:'board'}
 		},
 		creared : function() {
 		},
+//		mounted : function(){
+//			this.markers();
+//		},
 		router : new VueRouter({
 			routes : [
 				  { 
@@ -45,15 +48,23 @@
 				]
 		}),
 		methods : {
+			markers : function(){
+				$.get('/api/markers/'+map.getZoom()+'/'+map.getCenter().lng()+'/'+map.getCenter().lat(),function(features){
+					map.data.addGeoJson({
+						type : 'FeatureCollection',
+						features : features
+					});
+				});
+			},
 			write : function(){
-				var p = writeMarker.getPosition();
+				var p = map.getCenter();
 				/*$.post( , this.marker, function( feature ) {
 					map.data.addFeature(new naver.maps.Feature(feature));
 					$('.create_marker_close').click();
 				});*/
 				$.ajax({
 			        type : 'POST',
-			        url : '/api/marker/point/'+p._lng+'/'+p._lat,
+			        url : '/api/marker/point/'+p.lng()+'/'+p.lat(),
 			        contentType : 'application/json',
 			        data : JSON.stringify(this.marker),
 			        dataType : 'json',
@@ -94,34 +105,26 @@
 	/***************************************************************************
 	 * Map 을 정의함.
 	 */
-	map = new naver.maps.Map('map', {
+	var map = new naver.maps.Map('map', {
 		zoom : 8,
 		logoControl : false
 	});
 	map.data.setStyle(function(feature) {
         return {
-        	icon : MARKER_ICONS.T1 //feature.getProperty('icon')
+        	icon : feature.getProperty('icon')
         	//,title : feature.getProperty('title')
         };
     });
-	$.get('/api/markers',function(features){
-		map.data.addGeoJson({
-			type : 'FeatureCollection',
-		    features : features
-		});
-	});
+	vm.markers();
 	
 	var infoWindow = new naver.maps.InfoWindow();
-	var contentArray = ['<div style="width:150px;text-align:center;padding:10px;" onclick="vm.detail(\'',
-						'',
-						'\')">',
-						'',
-						'</div>'];
+	var contentArray = ['<div style="width:150px;text-align:center;padding:10px;" onclick="vm.detail(\'','','\')">','','</div>'];
 	infoWindow.setCustom = function(id, str){
 		contentArray[1] = id;
 		contentArray[3] = str;
 		this.setContent(contentArray.join(''));
 	}
+	// 마커클릭 이벤트 리스너  => 말풍선 
 	map.data.addListener('click', function(e) {
 //		if (infoWindow.getMap()) {
 //			infoWindow.close();
@@ -130,10 +133,20 @@
 	    	infoWindow.open(map, e.overlay);
 //	    }
     });
+	
+	// 맵 클릭 리스너 => 말풍선 제거 
 	naver.maps.Event.addListener(map, 'click', function() {
 		if (infoWindow.getMap()) {
 			infoWindow.close();
-	    }
+		}
+	});
+	
+	// 드레그하거나 핀치가 종료되면 마커 조회 
+	naver.maps.Event.addListener(map, 'dragend', function() {
+		vm.markers();
+	});
+	naver.maps.Event.addListener(map, 'pinchend', function() {
+		vm.markers();
 	});
 	
 
@@ -143,39 +156,53 @@
 	var writeMarkerBtn = new naver.maps.CustomControl('<img src="/images/add.svg">', {
 		position : naver.maps.Position.RIGHT_BOTTOM
 	});writeMarkerBtn.setMap(map);
-	naver.maps.Event.addDOMListener(writeMarkerBtn.getElement(), 'click', showWriteMarker);
+	naver.maps.Event.addDOMListener(writeMarkerBtn.getElement(), 'click', toggleWriteMarker);
 	
 	// 작성버튼 클릭하면 중앙에 위치 마커 생성
-	var writeMarker = new naver.maps.Marker({
-		position : map.getCenter(),
-		clickable: true
-	});
+//	var writeMarker = new naver.maps.Marker({
+//		position : map.getCenter(),
+//		clickable: true
+//	});
 	
 	// 중앙 위치 마커 클릭 이벤트
-	naver.maps.Event.addListener(writeMarker, 'click', function() { showWriteMarker();
-//		var p = writeMarker.getPosition();
-//		$.post( '/api/marker/point/'+p._lng+'/'+p._lat, function( feature ) {
-//			map.data.addFeature(new naver.maps.Feature(feature));
-//		});
+//	naver.maps.Event.addListener(writeMarker, 'click', function() { showWriteMarker();
+////		var p = writeMarker.getPosition();
+////		$.post( '/api/marker/point/'+p._lng+'/'+p._lat, function( feature ) {
+////			map.data.addFeature(new naver.maps.Feature(feature));
+////		});
+//		$('.create_marker_open').click();
+//	});
+	
+	$('#writeMarker').click(function(){
 		$('.create_marker_open').click();
+		toggleWriteMarker();
 	});
 	
 	// 중앙 위치 마커 표시 온/오프
-	function showWriteMarker(){
-		if(writeMarker.getMap()){
-			writeMarker.setMap(null);
-			naver.maps.Event.clearListeners(map,'center_changed');
+	function toggleWriteMarker(){
+		if($('#writeMarker').is(':visible')){
+			$('#writeMarker').hide();
 		}else{
-			writeMarker.setPosition(map.getCenter());
-			writeMarker.setMap(map);
-			naver.maps.Event.addListener(map, 'center_changed', function(e) {
-				writeMarker.setPosition(e);
-			});
+			$('#writeMarker').css('top', map.getSize().height/2 - $('#writeMarker').height());
+			$('#writeMarker').css('left', (map.getSize().width - $('#writeMarker').width()) / 2);
+			$('#writeMarker').show();
 		}
+//		if(writeMarker.getMap()){
+//			writeMarker.setMap(null);
+//			naver.maps.Event.clearListeners(map,'center_changed');
+//		}else{
+//			writeMarker.setPosition(map.getCenter());
+//			writeMarker.setMap(map);
+//			naver.maps.Event.addListener(map, 'center_changed', function(e) {
+//				writeMarker.setPosition(e);
+//			});
+//		}
 	}
 	
 
 	// map.setCenter(new naver.maps.LatLng(37.3595953, 127.1053971));
 	// naver.maps.Event.clearListeners(map,'center_changed');
 
+	g.vm = vm;
+	g.map = map;
 })(this);
