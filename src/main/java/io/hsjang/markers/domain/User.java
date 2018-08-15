@@ -20,6 +20,8 @@ public class User {
 	String image;
 	String auths;
 	
+	public User() {}
+	
 	public User(UserInfo userInfo) {
 		this.userId = userInfo.getUserId();
 		this.name = userInfo.getUserName();

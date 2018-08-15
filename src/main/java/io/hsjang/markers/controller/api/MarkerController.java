@@ -59,20 +59,8 @@ public class MarkerController {
 	@GetMapping("/marker/{id}")
 	public Mono<MarkerDetail> maker(@PathVariable String id) {
 		
-		return markerDetailRepository.findById(id);
-	
-//		.map(md-> userRepository.findById(md.getUserId())
-//						.publish(m->{md.setUser(); return md;}));
-				
-//					userRepository.findById(md.getUserId())
-//					.flatMap(u-> {md.setUser(u); return Mono.just(md);})
-//				);
-		
-		
-//		.publish(u->{
-//			md.setUser(u);
-//			return md;
-//		})
+		return markerDetailRepository.findById(id)
+				.flatMap(md->userRepository.findById(md.getUserId()).map(md::addUser));
 	}
 	
 	
@@ -83,14 +71,13 @@ public class MarkerController {
 	@PostMapping("/marker/point/{lat}/{lng}")
 	public Mono<Marker<GeoJsonPoint>> point(@RequestBody MarkerDetail markerDetail, @PathVariable double lat, @PathVariable double lng, @AuthenticationPrincipal String userId) {
 		return markerRepository.save(new Marker<GeoJsonPoint>(new GeoJsonPoint(lat, lng),markerDetail))
-				.map(m ->{
+				.flatMap(m ->
 					markerDetailRepository.save(
 							markerDetail
 								.addMarkerId(m.getId())
 								.addUserId(userId)
-							).subscribe();
-					return m;
-				});
+							).map(md -> m)
+				);
 	}
 	
 	

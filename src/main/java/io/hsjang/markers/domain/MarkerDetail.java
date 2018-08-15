@@ -35,7 +35,13 @@ public class MarkerDetail {
 		return this;
 	}
 	
+	public MarkerDetail addUser(User user) {
+		setUser(user);
+		return this;
+	}
+	
 	public String getIcon(){
 		return MarkerType.getType(getType()).getIcon();  //없을경우 ? FIXME
 	}
+	
 }
