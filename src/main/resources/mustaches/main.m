@@ -32,9 +32,13 @@
 		</div> -->
 		<marker-detail title="작성하기" id="create_marker">
 			<template slot-scope="props" slot="items">
+				<li><span>타입</span>
+					<select v-model="marker.type">
+					  <option value="board">게시판</option>
+					</select>
+				</li>
 				<li><span>제목</span><input type="text" v-model="marker.title"></li>
-				<li><span>내용</span><input type="text" v-model="marker.contents"></li>
-				<li><span>타입</span><input type="text" v-model="marker.type"></li>
+				<li><span>내용</span><input type="text" v-model="marker.cts.contents"></li>
 			</template>
 			<template slot-scope="props" slot="buttons">
 				<button  @click="write()" >작성</button>

@@ -98,7 +98,7 @@ public class MarkerToken implements Authentication {
 
 	@Override
 	public Object getPrincipal() {
-		return user.getUserId();
+		return user;
 	}
 
 	@Override

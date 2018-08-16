@@ -38,4 +38,5 @@ public class User {
 		this.image = jsonUser.getAsString("image");
 		this.auths = jsonUser.getAsString("auths");
 	}
+
 }

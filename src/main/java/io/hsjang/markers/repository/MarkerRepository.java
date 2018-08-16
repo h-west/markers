@@ -9,5 +9,5 @@ import reactor.core.publisher.Flux;
 
 public interface MarkerRepository extends ReactiveMongoRepository<Marker<?>, String>{
 
-	Flux<Marker<?>> findByGeometryNear(Point point , Distance d);
+	Flux<Marker<?>> findByGeometryNearOrderByIdDesc(Point point , Distance d);
 }

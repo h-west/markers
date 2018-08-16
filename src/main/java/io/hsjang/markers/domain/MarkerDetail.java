@@ -1,12 +1,14 @@
 package io.hsjang.markers.domain;
 
+import java.util.Map;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.hsjang.markers.type.MarkerType;
+import io.hsjang.markers.common.type.MarkerType;
 import lombok.Data;
 
 @Document
@@ -18,7 +20,7 @@ public class MarkerDetail {
 	String markerId;
 	String type;
 	String title;
-	String contents; // < map 전환 
+	Map<String,Object> cts; 
 
 	String userId;
 	// 작성일 등 메타 >> ID에서 가져올 수있나?

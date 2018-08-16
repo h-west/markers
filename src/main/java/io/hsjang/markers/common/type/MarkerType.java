@@ -1,4 +1,4 @@
-package io.hsjang.markers.type;
+package io.hsjang.markers.common.type;
 
 public enum MarkerType {
 

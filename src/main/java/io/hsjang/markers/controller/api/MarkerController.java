@@ -1,5 +1,7 @@
 package io.hsjang.markers.controller.api;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
@@ -24,7 +26,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/marker")
 public class MarkerController {
 	
 	@Autowired
@@ -36,22 +38,6 @@ public class MarkerController {
 	@Autowired
 	MarkerDetailRepository markerDetailRepository;
 
-	@Autowired
-	MapService mapService;
-
-	/************************
-	 * GET ITEMS 
-	 */
-	@GetMapping("/markers")
-	public Flux<Marker<?>> makers() {
-		//throw new MarkerException(MarkerExceptionType.UNKONWN);
-		return markerRepository.findAll().take(100);
-	}
-	
-	@GetMapping("/markers/{zoom}/{lat}/{lng}")
-	public Flux<Marker<?>> makers(@PathVariable int zoom, @PathVariable double lat, @PathVariable double lng) {
-		return markerRepository.findByGeometryNear(new Point(lat, lng), mapService.getDistanceByZoom(zoom)).take(100);
-	}
 	
 	/************************
 	 * GET ITEM

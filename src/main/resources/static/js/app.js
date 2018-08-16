@@ -24,7 +24,7 @@
 	var vm = new Vue({
 		el : '#app',
 		data : {
-			marker : {type:'board'}
+			marker : {type:'board',cts:{}}
 		},
 		creared : function() {
 		},
