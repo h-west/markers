@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.hsjang.markers.domain.Marker;
 import io.hsjang.markers.domain.MarkerDetail;
+import io.hsjang.markers.domain.User;
 import io.hsjang.markers.repository.MarkerDetailRepository;
 import io.hsjang.markers.repository.MarkerRepository;
 import io.hsjang.markers.repository.UserRepository;
@@ -42,7 +43,7 @@ public class MarkerController {
 	/************************
 	 * GET ITEM
 	 */
-	@GetMapping("/marker/{id}")
+	@GetMapping("/{id}")
 	public Mono<MarkerDetail> maker(@PathVariable String id) {
 		
 		return markerDetailRepository.findById(id)
@@ -54,14 +55,14 @@ public class MarkerController {
 	 * POST ITEM 
 	 */
 	@PreAuthorize("hasRole('USER')")
-	@PostMapping("/marker/point/{lat}/{lng}")
-	public Mono<Marker<GeoJsonPoint>> point(@RequestBody MarkerDetail markerDetail, @PathVariable double lat, @PathVariable double lng, @AuthenticationPrincipal String userId) {
+	@PostMapping("/point/{lat}/{lng}")
+	public Mono<Marker<GeoJsonPoint>> point(@RequestBody MarkerDetail markerDetail, @PathVariable double lat, @PathVariable double lng, @AuthenticationPrincipal User user) {
 		return markerRepository.save(new Marker<GeoJsonPoint>(new GeoJsonPoint(lat, lng),markerDetail))
 				.flatMap(m ->
 					markerDetailRepository.save(
 							markerDetail
 								.addMarkerId(m.getId())
-								.addUserId(userId)
+								.addUserId(user.getUserId())
 							).map(md -> m)
 				);
 	}

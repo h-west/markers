@@ -3,7 +3,8 @@ package io.hsjang.markers.common.type;
 public enum MarkerType {
 
 	BOARD("./images/t1.svg"),
-	DEFAULT("./images/t1.svg");
+	TALK("./images/t3.svg"),
+	DEFAULT("./images/d1.png");
 
 	String icon;
 
@@ -16,6 +17,10 @@ public enum MarkerType {
 	}
 	
 	public static MarkerType getType(String type) {
-		return valueOf(type.toUpperCase());
+		try {
+			return valueOf(type.toUpperCase());
+		}catch(IllegalArgumentException e) {
+			return MarkerType.DEFAULT;
+		}
 	}
 }
