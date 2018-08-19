@@ -1,5 +1,7 @@
 package io.hsjang.markers.controller.api;
 
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +18,7 @@ import io.hsjang.markers.domain.MarkerBoardDetail;
 import io.hsjang.markers.domain.User;
 import io.hsjang.markers.repository.MarkerBoardDetailRepository;
 import io.hsjang.markers.repository.MarkerBoardRepository;
+import io.hsjang.markers.repository.MarkerCommentRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -29,6 +32,9 @@ public class MarkerBoardController {
 	@Autowired
 	MarkerBoardDetailRepository markerBoardDetailRepository;
 
+	@Autowired
+	MarkerCommentRepository markerCommentRepository;
+	
 	@GetMapping("/{markerId}/board")
 	public Flux<MarkerBoard> boards(@PathVariable String markerId, Page page) {
 		return markerBoardRepository.findByMarkerIdOrderByIdDesc(markerId, PageRequest.of(page.getPage(), page.getSize()));
@@ -42,7 +48,13 @@ public class MarkerBoardController {
 	
 	@GetMapping("/board/{boardId}")
 	public Mono<MarkerBoardDetail> board(@PathVariable String boardId) {
-		return markerBoardDetailRepository.findById(boardId).flatMap(d->markerBoardRepository.findById(d.getBoardId()).map(d::addMarkerBoard));
+		Page page = new Page(); // default page
+		return markerBoardDetailRepository
+					.findById(boardId)
+					.flatMap(d->
+							markerCommentRepository.findByTypeAndTargetIdOrderByIdDesc("board", d.getBoardId(), PageRequest.of(page.getPage(), page.getSize()))
+							.collect(Collectors.toList()).map(d::addComments)
+					).flatMap(d->markerBoardRepository.findById(d.getBoardId()).map(d::addMarkerBoard));
 	}
 	
 

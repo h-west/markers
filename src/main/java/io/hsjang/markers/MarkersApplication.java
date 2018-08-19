@@ -10,6 +10,8 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.web.reactive.config.ResourceHandlerRegistry;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 import io.hsjang.markers.config.security.MarkerAuthenticationWebFilter;
 import reactor.core.publisher.Mono;
@@ -17,7 +19,7 @@ import reactor.core.publisher.Mono;
 @SpringBootApplication
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
-public class MarkersApplication {
+public class MarkersApplication implements WebFluxConfigurer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(MarkersApplication.class, args);
@@ -37,5 +39,12 @@ public class MarkersApplication {
 				.addFilterAt(new MarkerAuthenticationWebFilter(null), SecurityWebFiltersOrder.AUTHENTICATION)
 				.build();
 	}
+	
+	@Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/upload-image")
+            .addResourceLocations("file:///data/upload");
+            //.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
+    }
 	
 }

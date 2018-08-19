@@ -112,7 +112,7 @@
 																<option value="talk">대화방</option>
 																<option value="aaa">다른거</option>
 															</select>
-
+														<input type="file" id="file" ref="file" @change="uploadFile()"/>
 														<ul v-if="marker.type=='board'">
 															<li><span>내용</span><input type="text" v-model="marker.cts.contents"></li>
 														</ul>
@@ -145,6 +145,23 @@
 													success : function(feature) {
 														map.data.addFeature(new naver.maps.Feature(feature));
 														vm.$router.replace('/');
+													}
+												});
+											},
+											uploadFile : function() {
+												var formData = new FormData();
+												formData.append('file', this.$refs.file.files[0]);
+												//var data = new FormData(this.$refs.file.files[0]);
+												$.ajax({
+													type : 'POST',
+													url : '/api/file/upload',
+													enctype : 'multipart/form-data',
+													data : formData,
+													processData: false,  // Important!
+											        contentType: false,
+											        cache: false,
+													success : function(data) {
+														console.dir(data);
 													}
 												});
 											},
@@ -187,10 +204,9 @@
 										},
 										methods : {
 											detail : function(markerId) {
-												var $vm = this;
-												$.get('/api/marker/' + markerId, function(detail) {
-													$vm.$set($vm, 'marker', detail);
-													vm.$router.replace({name:'board', params:{markerId:$vm.$route.params.markerId}});
+												$.get('/api/marker/' + markerId, (marker) => {
+													this.marker = marker;
+													vm.$router.replace({name:marker.type, params:{markerId:this.$route.params.markerId}});
 												});
 											},
 											close : function(){
@@ -206,7 +222,7 @@
 												template : `<div>
 																<h4>게시판</h4>
 																<ul>
-																  <li v-for="board in boards" @click="getDetail('{{board.id}}')">
+																  <li v-for="board in boards" @click="getDetail(board.id)">
 																    {{ board.title }}
 																  </li>
 																</ul>
@@ -221,15 +237,12 @@
 												},
 												methods : {
 													getBoards : function(markerId) {
-														
-														// 나중에 다른걸로 변경. (this 쓸수있는 것으로)
-														var $vm = this;
-														$.get('/api/marker/' + markerId + '/board', function(boards) {
-															$vm.$set($vm, 'boards', boards);
+														$.get('/api/marker/' + markerId + '/board', (boards)=> {
+															this.boards = boards;
 														});
 													},
 													getDetail : function(boardId){
-														vm.$router.push({name:'board-detail', params:{boardId:boardId}});
+														vm.$router.replace({name:'board-detail', params:{boardId:boardId}});
 													},
 													close : function(){
 														vm.$router.push('/');
@@ -246,17 +259,20 @@
 																<div>
 																	상세 : {{ board.contents }}
 																</div>
+																<hr/>
+																[댓글]
 																<ul>
 																  <li v-for="comment in comments">
-																    {{ comment.title }}
+																    {{ comment.contents }}
 																  </li>
 																</ul>
 																<button  @click="list()">돌아가기</button>
 															</div>`,
 												created : function(){
-													//this.getBoards(this.$route.params.markerId);
+													this.getBoards(this.$route.params.boardId);
 													
-													console.log('게시판 상세정보와  코멘트 정보를 조회함.');
+													//게시판 가져올때 같이 한번 가져옴. 나중에 다음페이지는 따로 가져옴.
+													//this.getComments(this.$route.params.boardId);  
 												},
 												data : function(){
 													return {
@@ -265,19 +281,19 @@
 													}
 												},
 												methods : {
-													getBoards : function(id) {
-														
-														// 나중에 다른걸로 변경. (this 쓸수있는 것으로)
-														var $vm = this;
-//														$.get('/api/marker/' + id + '/board', function(boards) {
-//															$vm.$set($vm, 'boards', boards);
-//														});
+													getBoards : function(boardId) {
+														$.get('/api/marker/board/'+boardId, (board) => {
+															this.board = board;
+															this.comments = board.comments;
+														});
 													},
-													close : function(){
-														vm.$router.push('/');
+													getComments : function(boardId) {
+														$.get('/api/marker/board/comment/'+boardId, (comments) => {
+															this.comments = comments;
+														});
 													},
 													list : function(){
-														vm.$router.go(-1);
+														vm.$router.replace({name:'board'});
 													}
 												}
 											},
@@ -286,7 +302,32 @@
 											path : 'talk',
 											name : 'talk',
 											component : {
-												template : '<div><h4>TALK</h4></div>'
+												template : `<div>
+																<h4>대화방</h4>
+																<ul>
+																  <li v-for="talk in talks">
+																    {{ talk.contents }}
+																  </li>
+																</ul>
+															</div>`,
+												created : function(){
+													this.getTalks(this.$route.params.markerId);
+												},
+												data : function(){
+													return {
+														talks : []
+													}
+												},
+												methods : {
+													getTalks : function(markerId) {
+														$.get('/api/marker/' + markerId + '/talk', (talks)=> {
+															this.talks = talks;
+														});
+													},
+													close : function(){
+														vm.$router.push('/');
+													}
+												}
 											},
 										}
 									]
