@@ -53,13 +53,14 @@
 			detail : function(id) {
 				vm.$router.push('/pop/marker/'+id);
 				
-				// 말품선이 떠있으면 없애기  
+				// 말품선이 떠있으면 없애기
 				if (infoWindow.getMap()){
 					infoWindow.close();
 				}
 			}
 		},
-		router : new VueRouter({ // router.push (with history) router.replace (without history) router.go(n) -1
+		router : new VueRouter({ // router.push (with history) router.replace
+									// (without history) router.go(n) -1
 			routes : [
 					{
 						path : '/',
@@ -105,14 +106,26 @@
 										template : `<div>
 														<h4>신규마커</h4>
 														
-														<span>제목</span><input type="text" v-model="marker.title">
-														<span>타입</span>
-															<select v-model="marker.type">
-																<option value="board">게시판</option>
-																<option value="talk">대화방</option>
-																<option value="aaa">다른거</option>
-															</select>
-														<input type="file" id="file" ref="file" @change="uploadFile()"/>
+														<ul>
+															<li>
+																<span>제목</span><input type="text" v-model="marker.title">
+															</li>
+															<li>
+																<span>타입</span>
+																<select v-model="marker.type">
+																	<option value="board">게시판</option>
+																	<option value="talk">대화방</option>
+																	<option value="aaa">다른거</option>
+																</select>
+															</li>
+															<li>
+																<span>이미지</span>
+																<div>
+																	<input type="file" id="file" ref="file" @change="uploadFile()">
+																</div>
+															</li>
+														</ul>
+
 														<ul v-if="marker.type=='board'">
 															<li><span>내용</span><input type="text" v-model="marker.cts.contents"></li>
 														</ul>
@@ -151,7 +164,8 @@
 											uploadFile : function() {
 												var formData = new FormData();
 												formData.append('file', this.$refs.file.files[0]);
-												//var data = new FormData(this.$refs.file.files[0]);
+												// var data = new
+												// FormData(this.$refs.file.files[0]);
 												$.ajax({
 													type : 'POST',
 													url : '/api/file/upload',
@@ -160,8 +174,21 @@
 													processData: false,  // Important!
 											        contentType: false,
 											        cache: false,
-													success : function(data) {
-														console.dir(data);
+													success : (file) => {
+														/*
+														 * headers:{content-disposition:
+														 * ["form-data;
+														 * name="file";
+														 * filename="3.jpg""],
+														 * content-type:
+														 * ["image/jpeg"]}
+														 * id:"5b7a0f2bb1a90b44f8bf7900"
+														 * originFileName:"3.jpg"
+														 * savefileName:"/data/upload/880f5e52-55e1-4d72-ba39-00e6d1c3a6b2.jpg"
+														 * url:"/upload-image/880f5e52-55e1-4d72-ba39-00e6d1c3a6b2.jpg"
+														 * userId:"F1940361676003655"
+														 */
+														this.marker.image = file.url;
 													}
 												});
 											},
@@ -182,6 +209,7 @@
 									component : {
 										template : `<div>
 														<h4>상세내용</h4>	
+														<img :src="marker.image" style="width:50px;height:50px">
 														{{ $route.params.markerId }}
 														<div>
 															{{marker.title}}
@@ -225,14 +253,16 @@
 																  <li v-for="board in boards" @click="getDetail(board.id)">
 																    {{ board.title }}
 																  </li>
+																  <button @click="reg()">신규</button>
 																</ul>
 															</div>`,
 												created : function(){
-													this.getBoards(this.$route.params.markerId);
+													this.getBoards(this.markerId);
 												},
 												data : function(){
 													return {
-														boards : []
+														boards : [],
+														markerId : this.$route.params.markerId
 													}
 												},
 												methods : {
@@ -244,8 +274,46 @@
 													getDetail : function(boardId){
 														vm.$router.replace({name:'board-detail', params:{boardId:boardId}});
 													},
-													close : function(){
-														vm.$router.push('/');
+													reg : function(){
+														vm.$router.replace({name:'board-new', params:{markerId:this.markerId}});
+													}
+												}
+											},
+										},
+										{
+											path : 'board-new',
+											name : 'board-new',
+											component : {
+												template : `<div>
+																<h4>신규 게시판 작성</h4>
+																<div>
+																	<input type="text" v-model="board.title"><br>
+																	<textarea v-model="board.contents"/>
+																</div>
+																<button @click="reg()">저장</button>
+																<button @click="list()">취소</button>
+															</div>`,
+												data : function(){
+													return {
+														board : {},
+														markerId : this.$route.params.markerId
+													}
+												},
+												methods : {
+													reg : function() {
+														$.ajax({
+															type : 'POST',
+															url : '/api/marker/' + this.markerId + '/board',
+															contentType : 'application/json',
+															data : JSON.stringify(this.board),
+															dataType : 'json',
+															success : function(board) {
+																vm.$router.replace({name:'board'});
+															}
+														});
+													},
+													list : function() {
+														vm.$router.replace({name:'board'});
 													}
 												}
 											},
@@ -253,6 +321,124 @@
 										{
 											path : 'board-detail',
 											name : 'board-detail',
+											component : {
+												template : `<div>
+																<h4>게시판 상세</h4>
+																<div>
+																	<div v-if="!edit.board">
+																		제목 : {{ board.title }} <br/>
+																		상세 : {{ board.contents }} <br/>
+																		<button  @click="edit.board=true" v-if="board.board.user.userId==userId">수정</button>
+																	    <button  @click="delBoard()" v-if="board.board.user.userId==userId">삭제</button>
+																	</div>
+																	<div v-if="edit.board">
+																		제목 : <input type="text" v-model="boardTemp.title"> <br>
+																		상세 : <textarea v-model="boardTemp.contents"></textarea><br>
+																		<button  @click="updBoard()" v-if="board.board.user.userId==userId">수정완료</button>
+																		<button  @click="edit.board=false" v-if="board.board.user.userId==userId">수정쥐소</button>
+																	</div>
+																</div>
+																<hr/>
+																[댓글]<br>
+																<input type="text" v-model="comment.contents"><button  @click="regComment()">댓글등록</button><br>
+																<ul>
+																  <li v-for="comment in comments">
+																    <img :src="comment.user.image" style="width:30px;height:30px"> {{ comment.contents }} 
+																	<button  @click="updComment()" v-if="comment.user.userId==userId">수정</button>
+																    <button  @click="delComment()" v-if="comment.user.userId==userId">삭제</button>
+																  </li>
+																</ul>
+																<button  @click="list()">돌아가기</button>
+															</div>`,
+												created : function(){
+													this.getBoards();
+													
+													// 게시판 가져올때 같이 한번 가져옴. 나중에
+													// 다음페이지는 따로 가져옴.
+													// this.getComments();
+												},
+												data : function(){
+													return {
+														boardId : this.$route.params.boardId,
+														userId : this.$root.user.userId,
+														board : { board : {user : {userId:''}} },
+														boardTemp : {},
+														comments : [],
+														comment : {},
+														edit : {
+															board : false,
+															comment : false
+														}
+													}
+												},
+												methods : {
+													getBoards : function() {
+														$.get('/api/marker/board/'+this.boardId, (board) => {
+															this.board = board;
+															this.boardTemp = {
+																title : this.board.title,
+																contents : this.board.contents,
+																boardId : this.board.boardId
+															}
+															this.comments = board.comments;
+														});
+													},
+													getComments : function() {
+														$.get('/api/marker/board/comment/'+this.boardId, (comments) => {
+															this.comments = comments;
+														});
+													},
+													regComment : function() {
+														$.ajax({
+															type : 'POST',
+															url : '/api/marker/board/comment/' + this.boardId,
+															contentType : 'application/json',
+															data : JSON.stringify(this.comment),
+															dataType : 'json',
+															success : (comment) => {
+																this.getComments();
+																// comments.push()
+																// vm.$router.replace({name:'board'});
+															}
+														});
+													},
+													updBoard : function() {
+														$.ajax({
+															type : 'PUT',
+															url : '/api/marker/board/comment',
+															contentType : 'application/json',
+															data : JSON.stringify(this.boardTemp),
+															dataType : 'json',
+															success : (comment) => {
+																this.getComments();
+																// comments.push()
+																// vm.$router.replace({name:'board'});
+															}
+														});
+													},
+													delBoard : function() {
+														$.ajax({
+															type : 'DELETE',
+															url : '/api/marker/board/comment/' + this.boardId,
+															contentType : 'application/json',
+															data : JSON.stringify(this.comment),
+															dataType : 'json',
+															success : (comment) => {
+																this.getComments();
+																// comments.push()
+																// vm.$router.replace({name:'board'});
+															}
+														});
+													},
+													list : function(){
+														vm.$router.replace({name:'board'});
+													}
+												}
+											},
+										},
+										{
+											path : 'board-update',
+											name : 'board-update',
 											component : {
 												template : `<div>
 																<h4>게시판 상세</h4>
@@ -271,8 +457,9 @@
 												created : function(){
 													this.getBoards(this.$route.params.boardId);
 													
-													//게시판 가져올때 같이 한번 가져옴. 나중에 다음페이지는 따로 가져옴.
-													//this.getComments(this.$route.params.boardId);  
+													// 게시판 가져올때 같이 한번 가져옴. 나중에
+													// 다음페이지는 따로 가져옴.
+													// this.getComments(this.$route.params.boardId);
 												},
 												data : function(){
 													return {

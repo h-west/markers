@@ -13,10 +13,11 @@ import lombok.Data;
 @Document
 @Data
 @JsonInclude(Include.NON_NULL)
-public class MarkerBoardDetail{
+public class MarkerBoardDetail {
 	
 	@Id
 	String boardId;
+	String title;
 	String contents;
 	
 	MarkerBoard board;

@@ -25,6 +25,11 @@ public class MarkerBoard {
 		return this;
 	}
 	
+	public MarkerBoard addTitle(String title) {
+		setTitle(title);
+		return this;
+	}
+	
 	public MarkerBoard addUser(User user) {
 		setUser(user);
 		return this;

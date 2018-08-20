@@ -20,11 +20,10 @@ public class MarkerDetail {
 	String markerId;
 	String type;
 	String title;
+	String image = "/upload-image/default.png";
 	Map<String,Object> cts; 
 
 	String userId;
-	// 작성일 등 메타 >> ID에서 가져올 수있나?
-	
 	User user;
 
 	public MarkerDetail addMarkerId(String markerId) {

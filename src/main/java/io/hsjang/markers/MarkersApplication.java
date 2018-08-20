@@ -42,8 +42,8 @@ public class MarkersApplication implements WebFluxConfigurer{
 	
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/upload-image")
-            .addResourceLocations("file:///data/upload");
+        registry.addResourceHandler("/upload-image/**")
+            .addResourceLocations("file:///data/upload/");
             //.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
     }
 	

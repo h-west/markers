@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,8 +45,20 @@ public class MarkerBoardController {
 	
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/{markerId}/board")
-	public Mono<MarkerBoard> board(@PathVariable String markerId, MarkerBoard board, MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
-		return markerBoardRepository.save(board.addMarkerId(markerId).addUser(user)).flatMap(b->markerBoardDetailRepository.save(detail.addBoardId(b.getId())).map(d->b));
+	public Mono<MarkerBoard> board(@PathVariable String markerId, @RequestBody MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
+		return markerBoardRepository.save(new MarkerBoard().addTitle(detail.getTitle()).addMarkerId(markerId).addUser(user)).flatMap(b->markerBoardDetailRepository.save(detail.addBoardId(b.getId())).map(d->b));
+	}
+	
+	@PreAuthorize("hasRole('USER')")
+	@PutMapping("/board")
+	public Mono<MarkerBoard> uploadBoard(@PathVariable String markerId, @RequestBody MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
+		return markerBoardRepository.save(new MarkerBoard().addTitle(detail.getTitle()).addMarkerId(markerId).addUser(user)).flatMap(b->markerBoardDetailRepository.save(detail.addBoardId(b.getId())).map(d->b));
+	}
+	
+	@PreAuthorize("hasRole('USER')")
+	@DeleteMapping("/board")
+	public Mono<MarkerBoard> deleteBoard(@PathVariable String markerId, @RequestBody MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
+		return markerBoardRepository.save(new MarkerBoard().addTitle(detail.getTitle()).addMarkerId(markerId).addUser(user)).flatMap(b->markerBoardDetailRepository.save(detail.addBoardId(b.getId())).map(d->b));
 	}
 	
 	@GetMapping("/board/{boardId}")
