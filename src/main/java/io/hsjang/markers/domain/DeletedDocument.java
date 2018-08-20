@@ -13,9 +13,10 @@ public class DeletedDocument {
 	String id;
 	String collection;
 	Object document;
-	
-	public DeletedDocument(String collection, Object document) {
-		setCollection(collection);
+	public DeletedDocument() {}
+	public DeletedDocument(Object document) {
+		setCollection(document.getClass().getSimpleName());
 		setDocument(document);
 	}
+	
 }

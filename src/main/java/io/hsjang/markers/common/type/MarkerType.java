@@ -4,6 +4,7 @@ public enum MarkerType {
 
 	BOARD("./images/t1.svg"),
 	TALK("./images/t3.svg"),
+	SHOP("./images/t1.svg"),
 	DEFAULT("./images/d1.png");
 
 	String icon;

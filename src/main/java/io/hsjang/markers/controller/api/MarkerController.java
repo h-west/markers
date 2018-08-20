@@ -44,7 +44,7 @@ public class MarkerController {
 	 * GET ITEM
 	 */
 	@GetMapping("/{id}")
-	public Mono<MarkerDetail> maker(@PathVariable String id) {
+	public Mono<MarkerDetail> marker(@PathVariable String id) {
 		
 		return markerDetailRepository.findById(id)
 				.flatMap(md->userRepository.findById(md.getUserId()).map(md::addUser));

@@ -381,6 +381,7 @@
 																boardId : this.board.boardId
 															}
 															this.comments = board.comments;
+															this.edit.board=false;
 														});
 													},
 													getComments : function() {
@@ -405,28 +406,24 @@
 													updBoard : function() {
 														$.ajax({
 															type : 'PUT',
-															url : '/api/marker/board/comment',
+															url : '/api/marker/board',
 															contentType : 'application/json',
 															data : JSON.stringify(this.boardTemp),
 															dataType : 'json',
-															success : (comment) => {
-																this.getComments();
-																// comments.push()
-																// vm.$router.replace({name:'board'});
+															success : () => {
+																this.getBoards();
 															}
 														});
 													},
 													delBoard : function() {
 														$.ajax({
 															type : 'DELETE',
-															url : '/api/marker/board/comment/' + this.boardId,
+															url : '/api/marker/board',
 															contentType : 'application/json',
-															data : JSON.stringify(this.comment),
+															data : JSON.stringify(this.boardTemp),
 															dataType : 'json',
-															success : (comment) => {
-																this.getComments();
-																// comments.push()
-																// vm.$router.replace({name:'board'});
+															success : () => {
+																vm.$router.replace({name:'board'});
 															}
 														});
 													},

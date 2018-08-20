@@ -47,7 +47,7 @@ public class MarkerCommentController {
 	public Mono<MarkerComment> updateComment(@PathVariable String commentId, @RequestBody MarkerComment comment, @AuthenticationPrincipal User user) {
 		return markerCommentRepository
 					.findById(comment.getId())
-					.filter(c->c.getUser().getUserId() == user.getUserId())
+					.filter(c->c.getUser().getUserId().equals(user.getUserId()))
 					.flatMap(c->markerCommentRepository.save(comment))
 					.defaultIfEmpty(new MarkerComment());
 	}
@@ -57,7 +57,7 @@ public class MarkerCommentController {
 	public Mono<Void> deleteComment(@RequestBody MarkerComment comment, @AuthenticationPrincipal User user) {
 		return markerCommentRepository
 				.findById(comment.getId())
-				.filter(c->c.getUser().getUserId() == user.getUserId())
+				.filter(c->c.getUser().getUserId().equals(user.getUserId()))
 				.flatMap(c->markerCommentRepository.delete(comment));
 	}
 	

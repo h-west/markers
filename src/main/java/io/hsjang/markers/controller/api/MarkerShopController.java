@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/marker")
-public class MarkerBoardController {
+public class MarkerShopController {
 	
 	@Autowired
 	MarkerBoardRepository markerBoardRepository;
@@ -43,19 +43,19 @@ public class MarkerBoardController {
 	@Autowired
 	DeletedDocumentRepository deletedDocumentRepository;
 	
-	@GetMapping("/{markerId}/board")
+	@GetMapping("/{markerId}/shop")
 	public Flux<MarkerBoard> boards(@PathVariable String markerId, Page page) {
 		return markerBoardRepository.findByMarkerIdOrderByIdDesc(markerId, PageRequest.of(page.getPage(), page.getSize()));
 	}
 	
 	@PreAuthorize("hasRole('USER')")
-	@PostMapping("/{markerId}/board")
+	@PostMapping("/{markerId}/shop")
 	public Mono<MarkerBoard> board(@PathVariable String markerId, @RequestBody MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
 		return markerBoardRepository.save(new MarkerBoard().addTitle(detail.getTitle()).addMarkerId(markerId).addUser(user)).flatMap(b->markerBoardDetailRepository.save(detail.addBoardId(b.getId())).map(d->b));
 	}
 	
 	@PreAuthorize("hasRole('USER')")
-	@PutMapping("/board")
+	@PutMapping("/shop")
 	public Mono<MarkerBoardDetail> uploadBoard(@RequestBody MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
 		return markerBoardRepository.findById(detail.getBoardId())
 				.filter(b->b.getUser().getUserId().equals(user.getUserId()))
@@ -64,7 +64,7 @@ public class MarkerBoardController {
 	}
 	
 	@PreAuthorize("hasRole('USER')")
-	@DeleteMapping("/board")
+	@DeleteMapping("/shop")
 	public Mono<DeletedDocument> deleteBoard(@RequestBody MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
 		return markerBoardRepository.findById(detail.getBoardId())
 					.filter(b->b.getUser().getUserId().equals(user.getUserId()))
@@ -73,7 +73,7 @@ public class MarkerBoardController {
 		// 나중에 상세정보도 삭제하자.
 	}
 	
-	@GetMapping("/board/{boardId}")
+	@GetMapping("/shop/{boardId}")
 	public Mono<MarkerBoardDetail> board(@PathVariable String boardId) {
 		Page page = new Page(); // default page
 		return markerBoardDetailRepository

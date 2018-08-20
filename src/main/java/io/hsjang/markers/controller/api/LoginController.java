@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
 import io.hsjang.markers.config.security.MarkerToken;
+import io.hsjang.markers.domain.MarkerBoard;
 import io.hsjang.markers.domain.User;
 import io.hsjang.markers.repository.UserRepository;
 import io.hsjang.markers.service.user.provider.facebook.FacebookUserInfoProvider;
@@ -55,6 +56,11 @@ public class LoginController {
 	public static void main(String[] args) {
 		String aa = "asd.exe";
 		System.out.println(aa.substring( aa.lastIndexOf(".") ));
+		
+			System.out.println(MarkerBoard.class.getName());
+			System.out.println(MarkerBoard.class.getSimpleName());
+			System.out.println(MarkerBoard.class.getCanonicalName());
+			System.out.println(MarkerBoard.class.getTypeName());
 	}
 
 }
