@@ -3,8 +3,8 @@ package io.hsjang.markers.common.type;
 public enum MarkerType {
 
 	BOARD("./images/t1.svg"),
-	TALK("./images/t3.svg"),
-	SHOP("./images/t1.svg"),
+	TALK("./images/t2.svg"),
+	SHOP("./images/t3.svg"),
 	DEFAULT("./images/d1.png");
 
 	String icon;

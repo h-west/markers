@@ -1,19 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="30">
-	<style>
-		.selected {
-			transform-origin: center center;
-			-webkit-animation:spin 4s linear infinite;
-		    -moz-animation:spin 4s linear infinite;
-		    animation:spin 4s linear infinite;
-		}
-		@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-		@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-		@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
-		.selected:hover {
-			fill : red
-		}
-	</style>
-	<g class="currentLayer">
-		<path fill="#4a90d6" stroke="#41e841" stroke-width="2" stroke-linejoin="round" d="M4 14.5C4 9.8039 6.9088 6 10.5 6S17 9.8039 17 14.5c0 4.6961-2.9088 8.5-6.5 8.5S4 19.1961 4 14.5z" class="selected"/>
-	</g>
+<?xml version="1.0"?>
+<svg width="20" height="30" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <!-- Created with SVG-edit - https://github.com/SVG-Edit/svgedit-->
+ <g class="layer">
+  <title>Layer 1</title>
+  <rect fill="#878787" height="9.3" id="svg_1" stroke="#000000" stroke-linecap="round" stroke-linejoin="bevel" width="13.6" x="3.6" y="6.25"/>
+  <line fill="none" id="svg_4" stroke="#000000" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="bevel" x1="5.1" x2="5" y1="15.75" y2="25.75"/>
+  <line fill="none" id="svg_5" stroke="#000000" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="bevel" x1="15.199998" x2="15.099998" y1="15.9" y2="25.9"/>
+  <line fill="none" id="svg_6" stroke="#000000" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="bevel" x1="6.2" x2="7.5" y1="8.45" y2="8.45"/>
+  <line fill="none" id="svg_8" stroke="#000000" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="bevel" x1="6.3" x2="10" y1="10.45" y2="10.45"/>
+  <line fill="none" id="svg_9" stroke="#000000" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="bevel" x1="11.2" x2="14.2" y1="8.45" y2="8.45"/>
+  <line fill="none" id="svg_10" stroke="#000000" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="bevel" x1="6.1" x2="8.1" y1="12.45" y2="12.45"/>
+  <line fill="none" id="svg_11" stroke="#000000" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="bevel" x1="10.3" x2="14.2" y1="12.15" y2="12.15"/>
+ </g>
 </svg>

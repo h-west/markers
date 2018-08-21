@@ -35,9 +35,7 @@
 	var vm = new Vue({
 		el : '#app',
 		created: function () {
-			var mkt = this.$mkt.get();
-			this.isLogin = mkt.isLogin;
-			this.user = mkt.user;
+			this.initLogin();
 		},
 		data : {
 			isLogin : false,
@@ -57,6 +55,11 @@
 				if (infoWindow.getMap()){
 					infoWindow.close();
 				}
+			},
+			initLogin : function () {
+				var mkt = this.$mkt.get();
+				this.isLogin = mkt.isLogin;
+				this.user = mkt.user;
 			}
 		},
 		router : new VueRouter({ // router.push (with history) router.replace
@@ -87,9 +90,11 @@
 										template : '<div><h4>로그인</h4><a @click="login()">FACEBOOK으로 로그인하기</a></div>',
 										methods : {
 											login : function(){
+												var $this = this;
 												FB.login(function(response) {
 													if (response.authResponse){
-														$.post('/api/login/fb', response.authResponse).done(function(data) {
+														$.post('/api/login/fb', response.authResponse).done(function(data){
+															$this.$root.initLogin();
 															vm.$router.replace('/');
 														});
 													} else{
@@ -115,6 +120,7 @@
 																<select v-model="marker.type">
 																	<option value="board">게시판</option>
 																	<option value="talk">대화방</option>
+																	<option value="shop">숍</option>
 																	<option value="aaa">다른거</option>
 																</select>
 															</li>
