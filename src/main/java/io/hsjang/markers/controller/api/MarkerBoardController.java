@@ -1,5 +1,6 @@
 package io.hsjang.markers.controller.api;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.hsjang.markers.common.model.FormMap;
 import io.hsjang.markers.common.model.Page;
 import io.hsjang.markers.domain.DeletedDocument;
 import io.hsjang.markers.domain.MarkerBoard;
@@ -50,8 +52,11 @@ public class MarkerBoardController {
 	
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/{markerId}/board")
-	public Mono<MarkerBoard> board(@PathVariable String markerId, @RequestBody MarkerBoardDetail detail, @AuthenticationPrincipal User user) {
-		return markerBoardRepository.save(new MarkerBoard().addTitle(detail.getTitle()).addMarkerId(markerId).addUser(user)).flatMap(b->markerBoardDetailRepository.save(detail.addBoardId(b.getId())).map(d->b));
+	public Mono<MarkerBoard> board(@PathVariable String markerId, @RequestBody FormMap map, @AuthenticationPrincipal User user) {
+		return  Mono.zip(map.to(MarkerBoard.class),map.to(MarkerBoardDetail.class))
+				.flatMap(t2->markerBoardRepository.save(t2.getT1().addMarkerId(markerId).addUser(user))
+						.flatMap(b->markerBoardDetailRepository.save(t2.getT2().addBoardId(b.getId())).map(d->b))	
+				);
 	}
 	
 	@PreAuthorize("hasRole('USER')")

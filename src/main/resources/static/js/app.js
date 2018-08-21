@@ -343,9 +343,16 @@
 																<input type="text" v-model="comment.contents"><button  @click="regComment()">댓글등록</button><br>
 																<ul>
 																  <li v-for="comment in comments">
-																    <img :src="comment.user.image" style="width:30px;height:30px"> {{ comment.contents }} 
-																	<button  @click="updComment()" v-if="comment.user.userId==userId">수정</button>
-																    <button  @click="delComment()" v-if="comment.user.userId==userId">삭제</button>
+																  	<div v-if="!edit.comment || comment.id!=commentTemp.id">
+																	    <img :src="comment.user.image" style="width:30px;height:30px"> {{ comment.contents }} 
+																		<button  @click="showCommentEdit(comment)" v-if="comment.user.userId==userId">수정</button>
+																	    <button  @click="delComment(comment)" v-if="comment.user.userId==userId">삭제</button>
+																	 </div>
+																	 <div v-if="edit.comment && comment.id==commentTemp.id">
+																	 	<input type="text" v-model="commentTemp.contents"> <br>
+																	 	<button  @click="updComment(comment)" v-if="comment.user.userId==userId">수정완료</button>
+																	    <button  @click="edit.comment=false" v-if="comment.user.userId==userId">수정취소</button>
+																	 </div>
 																  </li>
 																</ul>
 																<button  @click="list()">돌아가기</button>
@@ -365,9 +372,11 @@
 														boardTemp : {},
 														comments : [],
 														comment : {},
+														commentTemp : {},
 														edit : {
 															board : false,
-															comment : false
+															comment : false,
+															commentIdx : -1
 														}
 													}
 												},
@@ -398,10 +407,14 @@
 															dataType : 'json',
 															success : (comment) => {
 																this.getComments();
-																// comments.push()
-																// vm.$router.replace({name:'board'});
+																this.comment={};
 															}
 														});
+													},
+													showCommentEdit : function(comment,idx){
+														this.edit.comment=true;
+														this.commentTemp = $.extend(true, {}, comment);
+														this.edit.commentIdx = idx;
 													},
 													updBoard : function() {
 														$.ajax({
@@ -424,6 +437,31 @@
 															dataType : 'json',
 															success : () => {
 																vm.$router.replace({name:'board'});
+															}
+														});
+													},
+													updComment : function(comment) {
+														$.ajax({
+															type : 'PUT',
+															url : '/api/marker/comment',
+															contentType : 'application/json',
+															data : JSON.stringify(this.commentTemp),
+															dataType : 'json',
+															success : () => {
+																Vue.set(comment,'contents', this.commentTemp.contents)
+																this.edit.comment=false;
+															}
+														});
+													},
+													delComment : function(comment) {
+														$.ajax({
+															type : 'DELETE',
+															url : '/api/marker/comment',
+															contentType : 'application/json',
+															data : JSON.stringify(comment),
+															dataType : 'json',
+															success : () => {
+																this.comments.splice(this.comments.indexOf(comment), 1);
 															}
 														});
 													},
@@ -563,6 +601,7 @@
 	map.data.addListener('click', function(e) {
 		infoWindow.setCustom(e.feature.id, e.feature.property_title);
 		infoWindow.open(map, e.overlay);
+		toggleWriteMarker({},true);
 	});
 
 	
@@ -600,14 +639,18 @@
 	});
 
 	// 중앙 위치 마커 표시 온/오프
-	function toggleWriteMarker() {
-		if ($writeMarker.is(':visible')){
+	function toggleWriteMarker(e,close) {
+		if (close || $writeMarker.is(':visible')){
 			$writeMarker.hide();
 		} else{
 			vm.login(function(){
 				$writeMarker.css('top', map.getSize().height / 2 - $writeMarker.height());
 				$writeMarker.css('left', (map.getSize().width - $writeMarker.width()) / 2);
 				$writeMarker.show();
+				
+				if (infoWindow.getMap()){
+					infoWindow.close();
+				}
 			})
 		}
 	}
