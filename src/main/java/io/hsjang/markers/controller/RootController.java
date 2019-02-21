@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import io.hsjang.markers.common.type.v2.MarkerType;
 import reactor.core.publisher.Mono;
 
 @Controller
@@ -18,6 +19,8 @@ public class RootController {
 	
 	@RequestMapping("/{page}")
 	public String page(@PathVariable String page) {
+		//MarkerType.LOCAL_01.getChildren()
+		System.out.println(MarkerType.LOCAL_01_01.getChildren());
 		return page;
 	}
 	
